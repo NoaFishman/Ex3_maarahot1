@@ -196,49 +196,63 @@ void StrList_remove(StrList* StrList, const char* data){
 
 /* Given an index and a list, remove the string at that index.*/
 void StrList_removeAt(StrList* StrList, int index){
-    Node* pcurr1 = StrList->_head;
-    Node* pcurr2 = StrList->_head->_next;
-    int i;
-    if(index> StrList->_size) {
-        return;
+    if(StrList != NULL){
+        int x =StrList_size(StrList);
+        if( x>0){
+            Node* pcurr1 = StrList->_head;
+            Node* pcurr2 = StrList->_head->_next;
+            int i;
+            // if the given index is 0 so the for loop wont be abel to remove it
+            if(index==0){
+                StrList->_head=StrList->_head->_next;
+                StrList->_size--;
+                return;
+            }
+            // run untill the  pcurr2 index is the requeir index  
+            for (i=1; i< index; i++){
+                pcurr1 = pcurr1->_next;
+                pcurr2 = pcurr2->_next;
+            }
+            pcurr1->_next=pcurr2->_next;
+            StrList->_size--;
+            free(pcurr2); 
+        }
     }
-    // if the given index is 0 so the for loop wont be abel to remove it
-    if(index==0){
-        StrList->_head=StrList->_head->_next;
-        StrList->_size--;
-        return;
-    }
-    // run untill the  pcurr2 index is the requeir index  
-    for (i=1; i< index; i++){
-        pcurr1 = pcurr1->_next;
-        pcurr2 = pcurr2->_next;
-    }
-    pcurr1->_next=pcurr2->_next;
-    StrList->_size--;
-    free(pcurr2);
 }
 
 /* Checks if two StrLists have the same elements
  * returns 0 if not and any other number if yes */
 int StrList_isEqual(const StrList* StrList1, const StrList* StrList2){
-    Node* pcurr1 = StrList1->_head;
-    Node* pcurr2 = StrList2->_head;
-    int flag=0;
-    if (StrList1->_size==StrList2->_size){
-        flag =1;
-        while(pcurr1 && flag==1){
-            if(strcmp(pcurr1->_word, pcurr2->_word)!=0){
-                flag = 0;
-            }
-            // add one if the words are the same 
-            pcurr1=pcurr1->_next;
-            pcurr2=pcurr2->_next;
-        }
+     int flag;
+    if(StrList2 == NULL && StrList1 == NULL){
+        return 0;
     }
-    // all the words need to be the same so the cound is the size
-    // if(count== StrList1->_size){
-    //     return count;
-    // }
+    if(StrList2 != NULL && StrList1 == NULL){
+        return 1;
+    }
+    if(StrList2 == NULL && StrList1 != NULL){
+        return 1;
+    }
+    if(StrList2 != NULL && StrList1 != NULL){
+        Node* pcurr1 = StrList1->_head;
+        Node* pcurr2 = StrList2->_head;
+        flag=0;
+        if (StrList1->_size==StrList2->_size){
+            flag =1;
+            while(pcurr1 && flag==1){
+                if(strcmp(pcurr1->_word, pcurr2->_word)!=0){
+                    flag = 0;
+                }
+                // add one if the words are the same 
+                pcurr1=pcurr1->_next;
+                pcurr2=pcurr2->_next;
+            }
+        }
+        // all the words need to be the same so the cound is the size
+        // if(count== StrList1->_size){
+        //     return count;
+        // }
+    }
     return flag;
 }
 
@@ -268,21 +282,29 @@ StrList* StrList_clone(const StrList* Strlist){
 /* Reverces the given StrList. */
 // revers the orders of the strings not the strings it self ***********************
 void StrList_reverse( StrList* Strlist){
-    Node* pcurr1 = Strlist->_head->_next;
-    Node* pcurr2 = Strlist->_head;
-    while(pcurr1->_next!=NULL){
-        StrList_insertAt(Strlist, pcurr1->_word, 0);
-        pcurr2->_next=pcurr1->_next;
-        pcurr1=pcurr1->_next;
-    } 
-    StrList_insertAt(Strlist, pcurr1->_word, 0); 
-    pcurr2->_next=NULL;
-    free(pcurr1);
+    if(Strlist==NULL){
+        return;
+    }
+    if(Strlist->_head){
+        Node* pcurr1 = Strlist->_head->_next;
+        Node* pcurr2 = Strlist->_head;
+        while(pcurr1->_next!=NULL){
+            StrList_insertAt(Strlist, pcurr1->_word, 0);
+            pcurr2->_next=pcurr1->_next;
+            pcurr1=pcurr1->_next;
+        } 
+        StrList_insertAt(Strlist, pcurr1->_word, 0); 
+        pcurr2->_next=NULL;
+        free(pcurr1);
+    }
 }
 
 
 /* Sort the given list in lexicographical order */
 void StrList_sort( StrList* StrList){
+    if(StrList==NULL){
+        return;
+    }
 
     int swapped;
     Node* pcurr1;
